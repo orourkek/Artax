@@ -19,7 +19,7 @@
     }
   ],
   "require": {
-    "morrisonlevi/ardent": ">=0.1",
+    "morrisonlevi/ardent": "dev-master",
     "php": ">=5.3"
   },
   "autoload": {
