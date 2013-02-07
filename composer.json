@@ -19,7 +19,7 @@
     }
   ],
   "require": {
-    "morrisonlevi/spl": "dev-5.3_compatible",
+    "morrisonlevi/ardent": ">=0.1",
     "php": ">=5.3"
   },
   "autoload": {
