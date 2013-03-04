@@ -10,29 +10,29 @@ use Ardent\TypeException,
  * A mutable object used to incrementally build HTTP Requests
  */
 class StdRequest extends StdMessage implements MutableRequest {
-    
+
     /**
      * @var \Artax\Uri
      */
-    private $uri;
-    
+    protected $uri;
+
     /**
      * @var string
      */
-    private $method;
-    
+    protected $method;
+
     /**
      * Retrieve the request URI
-     * 
+     *
      * @return string
      */
     public function getUri() {
         return $this->uri ? $this->uri->__toString() : null;
     }
-    
+
     /**
      * Assign the request URI
-     * 
+     *
      * @param string $uri
      * @throws \Ardent\DomainException On some seriously malformed URIs
      * @return void
@@ -40,19 +40,19 @@ class StdRequest extends StdMessage implements MutableRequest {
     public function setUri($uri) {
         $this->uri = new Uri($uri);
     }
-    
+
     /**
      * Retrieve the HTTP method verb
-     * 
+     *
      * @return string
      */
     public function getMethod() {
         return $this->method;
     }
-    
+
     /**
      * Assign the HTTP method verb
-     * 
+     *
      * @param string $method
      * @throws \Ardent\DomainException On invalid method
      * @return void
@@ -60,16 +60,16 @@ class StdRequest extends StdMessage implements MutableRequest {
     public function setMethod($method) {
         $this->assignMethod($method);
     }
-    
+
     /**
      * Assign a request method
-     * 
+     *
      * token          = 1*<any CHAR except CTLs or separators>
      * separators     = "(" | ")" | "<" | ">" | "@"
      *                | "," | ";" | ":" | "\" | <">
      *                | "/" | "[" | "]" | "?" | "="
      *                | "{" | "}" | SP | HT
-     * 
+     *
      * @param string $method
      * @throws \Ardent\DomainException On invalid method verb
      * @return void
@@ -77,7 +77,7 @@ class StdRequest extends StdMessage implements MutableRequest {
      */
     protected function assignMethod($method) {
         $pattern = ",^\s*([^\x{00}-\x{20}\(\)<>@\,;:\"/\[\]\?={}\\\\]+)\s*$,";
-        
+
         if (preg_match($pattern, $method, $match)) {
             $this->method = $match[1];
         } else {
@@ -86,10 +86,10 @@ class StdRequest extends StdMessage implements MutableRequest {
             );
         }
     }
-    
+
     /**
      * Build a raw HTTP message request line (without trailing CRLF)
-     * 
+     *
      * @throws \Ardent\DomainException On missing HTTP version or method verb
      * @return string
      */
@@ -105,16 +105,16 @@ class StdRequest extends StdMessage implements MutableRequest {
         } else {
             $msg = Request::CONNECT . ' ' . $this->uri->getAuthority();
         }
-        
+
         // The leading space before "HTTP" matters! Don't delete it!
         $msg .= ' ' . Message::HTTP_PROTOCOL_PREFIX . $this->getProtocol();
-        
+
         return $msg;
     }
-    
+
     /**
      * Import all properties of an existing Request implementation into the current instance
-     * 
+     *
      * @param Request $request
      * @throws \Ardent\TypeException If non-Request argument specified
      * @return void
@@ -126,17 +126,17 @@ class StdRequest extends StdMessage implements MutableRequest {
                 'Argument 1'
             );
         }
-        
+
         $this->setUri($request->getUri());
         $this->setProtocol($request->getProtocol());
         $this->setMethod($request->getMethod());
         $this->setAllHeaders($request->getAllHeaders());
         $this->assignBody($request->getBody());
     }
-    
+
     /**
      * Export an immutable ValueRequest from the current instance
-     * 
+     *
      * @throws \Ardent\DomainException On missing method/URI/protocol
      * @return ValueRequest
      */
@@ -146,7 +146,7 @@ class StdRequest extends StdMessage implements MutableRequest {
                 "Protocol, method and URI must be assigned prior to exporting a request"
             );
         }
-        
+
         return new ValueRequest(
             $this->getMethod(),
             $this->getUri(),
